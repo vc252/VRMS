@@ -1,6 +1,6 @@
-package fun.stockpiece.vehicle.rental.management.system.security;
+package fun.stockpiece.vehicle.rental.management.system.config;
 
-import fun.stockpiece.vehicle.rental.management.system.util.JwtUtil;
+import fun.stockpiece.vehicle.rental.management.system.security.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/health-check","/api/register/**","/api/auth/**").permitAll()
+                        .requestMatchers("/api/health-check","/api/register/**","/api/auth/login").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restrict to ADMIN
                         .requestMatchers("/api/customer/**").hasRole("CUSTOMER") // Restrict to CUSTOMER
                         .requestMatchers("/api/driver/**").hasRole("DRIVER") // Restrict to DRIVER

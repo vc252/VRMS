@@ -1,11 +1,9 @@
 package fun.stockpiece.vehicle.rental.management.system.util;
 
-import fun.stockpiece.vehicle.rental.management.system.dto.ApiException;
 import fun.stockpiece.vehicle.rental.management.system.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 

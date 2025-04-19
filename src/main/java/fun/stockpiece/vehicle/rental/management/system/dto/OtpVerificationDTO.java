@@ -1,18 +1,17 @@
 package fun.stockpiece.vehicle.rental.management.system.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserLoginDTO {
-    @NotBlank(message = "username must be provided")
-    private String username;
-    @NotBlank(message = "password must be provided")
-    private String password;
+public class OtpVerificationDTO {
+    @NotBlank
+    @Pattern(regexp = "^[0-9]{6}$", message = "OTP must be exactly 6 digits")
+    private String otp;
 }
-
