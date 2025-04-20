@@ -1,9 +1,6 @@
 package fun.stockpiece.vehicle.rental.management.system.service;
 
-import fun.stockpiece.vehicle.rental.management.system.dto.ApiException;
-import fun.stockpiece.vehicle.rental.management.system.dto.ProfileUpdateDTO;
-import fun.stockpiece.vehicle.rental.management.system.dto.UserRegistrationDTO;
-import fun.stockpiece.vehicle.rental.management.system.dto.UserResponseDTO;
+import fun.stockpiece.vehicle.rental.management.system.dto.*;
 import fun.stockpiece.vehicle.rental.management.system.model.Admin;
 import fun.stockpiece.vehicle.rental.management.system.model.Customer;
 import fun.stockpiece.vehicle.rental.management.system.model.Driver;
@@ -130,17 +127,6 @@ public class UserService {
                 .build();
     }
 
-    public UserResponseDTO convertUserToUserResponseDTO(User user) {
-        return UserResponseDTO.builder()
-                .userId(user.getUserId())
-                .username(user.getUsername())
-                .fullname(user.getFullname())
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
-                .address(user.getAddress())
-                .build();
-    }
-
     private void validateUser(User user) {
         if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
             throw new IllegalArgumentException("Username is required");
@@ -186,5 +172,31 @@ public class UserService {
         user.setPassword(ArgonUtil.hashPassword(newPassword));
 
         userRepository.save(user);
+    }
+
+    public UserProfileDTO convertUserToUserProfileDTO(User user) {
+        UserProfileDTO profileDTO = UserProfileDTO.builder()
+                .id(user.getUserId().toString())
+                .username(user.getUsername())
+                .fullname(user.getFullname())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .address(user.getAddress())
+                .roles(user.getRoles())
+                .emailVerified(user.isEmailVerified())
+                .build();
+
+        // Set role-specific fields based on user role
+        if (user.getRoles().contains(User.UserRole.CUSTOMER)) {
+            Customer customer = (Customer) user;
+            profileDTO.setDepositAmount(customer.getDepositAmount());
+            profileDTO.setIsRegular(customer.isRegular());
+        } else if (user.getRoles().contains(User.UserRole.DRIVER)) {
+            Driver driver = (Driver) user;
+            profileDTO.setIsApproved(driver.isApproved());
+            profileDTO.setIsAvailable(driver.isAvailable());
+        }
+
+        return profileDTO;
     }
 }

@@ -11,10 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -141,10 +138,10 @@ public class UserController {
         User updatedUser = userService.updateUserProfile(username, profileUpdateDTO);
 
         return ResponseEntity.ok(
-                ApiResponse.<UserResponseDTO>builder()
+                ApiResponse.<UserProfileDTO>builder()
                         .success(true)
                         .message("Profile updated successfully")
-                        .data(userService.convertUserToUserResponseDTO(updatedUser))
+                        .data(userService.convertUserToUserProfileDTO(updatedUser))
                         .status(HttpStatus.OK)
                         .build()
         );
@@ -167,6 +164,24 @@ public class UserController {
                 ApiResponse.builder()
                         .success(true)
                         .message("Password updated successfully")
+                        .status(HttpStatus.OK)
+                        .build()
+        );
+    }
+
+    @GetMapping("/user/profile")
+    public ResponseEntity<?> getUserProfile() {
+        // Get current authenticated user from the security context
+        PrincipalUser userDetails = (PrincipalUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // Get the user profile directly from the PrincipalUser
+        UserProfileDTO profileDTO = userService.convertUserToUserProfileDTO(userDetails.getUser());
+
+        return ResponseEntity.ok(
+                ApiResponse.<UserProfileDTO>builder()
+                        .success(true)
+                        .message("User profile retrieved successfully")
+                        .data(profileDTO)
                         .status(HttpStatus.OK)
                         .build()
         );
