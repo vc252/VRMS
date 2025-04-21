@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @SuperBuilder
 public class Customer extends User {
     private double depositAmount;
-    private boolean isRegular;
+    private boolean isApproved;
 
     public Customer() {
         addRole(UserRole.CUSTOMER);

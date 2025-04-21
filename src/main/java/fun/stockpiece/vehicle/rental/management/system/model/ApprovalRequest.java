@@ -18,14 +18,14 @@ import java.time.LocalDateTime;
 public class ApprovalRequest {
     @Id
     private ObjectId id;
-    private ObjectId userId;
+    private ObjectId submittedBy;
     private ApprovalStatus status;
     private LocalDateTime submittedAt;
     private LocalDateTime reviewedAt;
-    private ObjectId reviewerId;
+    private ObjectId reviewedBy;
     private String comments;
 
-    public enum ApprovalStatus {
+    public static enum ApprovalStatus {
         PENDING,
         APPROVED,
         REJECTED

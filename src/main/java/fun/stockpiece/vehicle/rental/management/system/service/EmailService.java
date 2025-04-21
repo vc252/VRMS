@@ -8,7 +8,6 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Email;
 import com.sendgrid.helpers.mail.objects.Personalization;
 import fun.stockpiece.vehicle.rental.management.system.dto.ApiException;
-import fun.stockpiece.vehicle.rental.management.system.dto.OtpVerificationDTO;
 import fun.stockpiece.vehicle.rental.management.system.model.Otp;
 import fun.stockpiece.vehicle.rental.management.system.repository.OtpRepository;
 import lombok.AllArgsConstructor;
@@ -69,9 +68,6 @@ public class EmailService {
 
     private String generateSixDigitOtp(String email) {
         SecureRandom random = new SecureRandom();
-
-        Optional<Otp> existingOtp = otpRepository.findByEmail(email);
-
         String code;
         do {
             code = String.valueOf(random.nextInt(1000000));
@@ -90,9 +86,5 @@ public class EmailService {
 
     private boolean otpExists(String otp) {
         return otpRepository.existsByCode(otp);
-    }
-
-    private boolean otpExistsForEmail(String email) {
-        return otpRepository.existsByEmail(email);
     }
 }

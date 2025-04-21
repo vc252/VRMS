@@ -26,9 +26,7 @@ public class UserProfileDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Double depositAmount; // For Customer
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Boolean isRegular;    // For Customer
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Boolean isApproved;   // For Driver
+    private Boolean isApproved;   // For Driver and Customer
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean isAvailable;  // For Driver
 }

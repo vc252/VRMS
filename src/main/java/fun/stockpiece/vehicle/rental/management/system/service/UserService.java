@@ -190,7 +190,7 @@ public class UserService {
         if (user.getRoles().contains(User.UserRole.CUSTOMER)) {
             Customer customer = (Customer) user;
             profileDTO.setDepositAmount(customer.getDepositAmount());
-            profileDTO.setIsRegular(customer.isRegular());
+            profileDTO.setIsApproved(customer.isApproved());
         } else if (user.getRoles().contains(User.UserRole.DRIVER)) {
             Driver driver = (Driver) user;
             profileDTO.setIsApproved(driver.isApproved());

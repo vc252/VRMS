@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class UserController {
 
     @PostMapping("/register/customer")
     public ResponseEntity<?> registerCustomer(@RequestBody @Valid UserRegistrationDTO customer) {
-        User savedUser = userService.registerCustomer(userService.convertUserRegistrationDTOtoCustomer(customer));
+        userService.registerCustomer(userService.convertUserRegistrationDTOtoCustomer(customer));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<Customer>builder()
@@ -40,7 +41,7 @@ public class UserController {
 
     @PostMapping("register/admin")
     public ResponseEntity<?> registerAdmin(@RequestBody @Valid UserRegistrationDTO admin) {
-        User savedUser = userService.registerAdmin(userService.convertUserRegistrationDTOtoAdmin(admin));
+        userService.registerAdmin(userService.convertUserRegistrationDTOtoAdmin(admin));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<User>builder()
@@ -53,7 +54,7 @@ public class UserController {
 
     @PostMapping("register/driver")
     public ResponseEntity<?> registerDriver(@RequestBody @Valid UserRegistrationDTO driver) {
-        User savedUser = userService.registerDriver(userService.convertUserRegistrationDTOtoDriver(driver));
+        userService.registerDriver(userService.convertUserRegistrationDTOtoDriver(driver));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<User>builder()
@@ -70,7 +71,7 @@ public class UserController {
         Map<String,String> token = new HashMap<>();
         token.put("accessToken",accessToken);
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                ApiResponse.<Map>builder()
+                ApiResponse.<Map<String,String>>builder()
                         .success(true)
                         .data(token)
                         .message("user logged in successfully")
@@ -80,12 +81,11 @@ public class UserController {
     }
 
     @PostMapping("/auth/otp")
-    public ResponseEntity<?> sendOtp() throws IOException {
-        PrincipalUser userDetails = (PrincipalUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<?> sendOtp(@AuthenticationPrincipal PrincipalUser userDetails) throws IOException {
         HttpStatus httpStatus = emailService.sendEmailVerificationOTP(userDetails.getEmail());
 
         return ResponseEntity.status(httpStatus).body(
-                ApiResponse.<Object>builder()
+                ApiResponse.builder()
                         .success(true)
                         .message("email sent successfully")
                         .status(httpStatus)
@@ -94,8 +94,7 @@ public class UserController {
     }
 
     @PostMapping("/auth/verify-email")
-    public ResponseEntity<?> verifyEmail(@RequestBody @Valid OtpVerificationDTO otpVerificationDTO) {
-        PrincipalUser userDetails = (PrincipalUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<?> verifyEmail(@RequestBody @Valid OtpVerificationDTO otpVerificationDTO, @AuthenticationPrincipal PrincipalUser userDetails) {
         boolean verified = emailService.verifyOtp(userDetails.getEmail(),otpVerificationDTO.getOtp());
 
         if (!verified) {
@@ -105,7 +104,7 @@ public class UserController {
         userService.markAccountAsVerified(userDetails.getEmail());
 
         return ResponseEntity.status(HttpStatus.OK).body(
-                ApiResponse.<Object>builder()
+                ApiResponse.builder()
                         .success(true)
                         .message("email verified")
                         .status(HttpStatus.OK)
@@ -114,8 +113,7 @@ public class UserController {
     }
 
     @PostMapping("/auth/verify-otp")
-    public ResponseEntity<?> verifyOtp(@RequestBody @Valid OtpVerificationDTO otpVerificationDTO) {
-        PrincipalUser userDetails = (PrincipalUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<?> verifyOtp(@RequestBody @Valid OtpVerificationDTO otpVerificationDTO, @AuthenticationPrincipal PrincipalUser userDetails) {
         boolean verified = emailService.verifyOtp(userDetails.getEmail(),otpVerificationDTO.getOtp());
 
         if (!verified) {
@@ -124,7 +122,7 @@ public class UserController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(
-                ApiResponse.<Object>builder()
+                ApiResponse.builder()
                         .success(true)
                         .message("otp verified")
                         .status(HttpStatus.OK)
@@ -148,9 +146,7 @@ public class UserController {
     }
 
     @PostMapping("/auth/update-password")
-    public ResponseEntity<?> updatePassword(@RequestBody @Valid PasswordUpdateDTO passwordUpdateDTO) {
-        PrincipalUser userDetails = (PrincipalUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+    public ResponseEntity<?> updatePassword(@RequestBody @Valid PasswordUpdateDTO passwordUpdateDTO, @AuthenticationPrincipal PrincipalUser userDetails) {
         boolean otpVerified = emailService.verifyOtp(userDetails.getEmail(),passwordUpdateDTO.getOtp());
 
         if (!otpVerified) {
@@ -170,10 +166,7 @@ public class UserController {
     }
 
     @GetMapping("/user/profile")
-    public ResponseEntity<?> getUserProfile() {
-        // Get current authenticated user from the security context
-        PrincipalUser userDetails = (PrincipalUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+    public ResponseEntity<?> getUserProfile(@AuthenticationPrincipal PrincipalUser userDetails) {
         // Get the user profile directly from the PrincipalUser
         UserProfileDTO profileDTO = userService.convertUserToUserProfileDTO(userDetails.getUser());
 
