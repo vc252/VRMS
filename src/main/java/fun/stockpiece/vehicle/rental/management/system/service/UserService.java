@@ -10,6 +10,7 @@ import fun.stockpiece.vehicle.rental.management.system.security.PrincipalUser;
 import fun.stockpiece.vehicle.rental.management.system.util.ArgonUtil;
 import fun.stockpiece.vehicle.rental.management.system.util.JwtUtil;
 import lombok.AllArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +26,28 @@ public class UserService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+
+    public Driver toggleDriverAvailability(String driverId) {
+        ObjectId id = new ObjectId(driverId);
+        Driver driver = (Driver) userRepository.findById(id)
+                .orElseThrow(() -> new ApiException(
+                        "Driver not found",
+                        HttpStatus.NOT_FOUND.value(),
+                        "No driver found with id: " + driverId
+                ));
+
+        if (!driver.getRoles().contains(User.UserRole.DRIVER)) {
+            throw new ApiException(
+                    "Not a driver",
+                    HttpStatus.BAD_REQUEST.value(),
+                    "User with id: " + driverId + " is not a driver"
+            );
+        }
+
+        // Toggle availability
+        driver.setAvailable(!driver.isAvailable());
+        return (Driver) userRepository.save(driver);
+    }
 
     public User registerAdmin(Admin admin) {
         validateUser(admin);

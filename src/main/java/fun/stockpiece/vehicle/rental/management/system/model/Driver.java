@@ -1,5 +1,6 @@
 package fun.stockpiece.vehicle.rental.management.system.model;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
@@ -11,7 +12,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @SuperBuilder
 public class Driver extends User{
     private boolean isApproved;
-    private boolean isAvailable;
+    @Builder.Default
+    private boolean isAvailable = true;
 
     public Driver() {
         addRole(UserRole.DRIVER);

@@ -44,7 +44,7 @@ public class UserController {
         userService.registerAdmin(userService.convertUserRegistrationDTOtoAdmin(admin));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                ApiResponse.<User>builder()
+                ApiResponse.<Void>builder()
                         .success(true)
                         .message("Admin created successfully")
                         .status(HttpStatus.CREATED)
@@ -57,7 +57,7 @@ public class UserController {
         userService.registerDriver(userService.convertUserRegistrationDTOtoDriver(driver));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                ApiResponse.<User>builder()
+                ApiResponse.<Void>builder()
                         .success(true)
                         .message("Driver created successfully")
                         .status(HttpStatus.CREATED)

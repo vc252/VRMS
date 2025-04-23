@@ -64,7 +64,7 @@ public class ApprovalRequestService {
     private PendingRequestDTO convertApprovalRequestToPendingRequest(ApprovalRequest approvalRequest, User user) {
         PendingRequestDTO.PendingRequestDTOBuilder builder = PendingRequestDTO.builder()
                 .requestId(approvalRequest.getId().toString())
-                .userId(user.getUserId())
+                .userId(user.getUserId().toString())
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .fullname(user.getFullname())

@@ -17,7 +17,7 @@ import java.util.Set;
 @Builder
 public class PendingRequestDTO {
     private String requestId;
-    private ObjectId userId;
+    private String userId;
     private String username;
     private String email;
     private String fullname;
